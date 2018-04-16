@@ -1,5 +1,6 @@
 module HaskellWorks.Aws.Sqs.Conduit
   ( sqsSink
+  , sqsSource
   ) where
 
 import Control.Monad.IO.Class
