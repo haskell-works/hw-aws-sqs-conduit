@@ -1,9 +1,9 @@
 version: 2.0
 jobs:
   build:
-    working_directory: ~/hw-aws-sqs-conduit
+    working_directory: ~/project
     docker:
-      - image: fpco/stack-build:latest
+      - image: quay.io/haskell_works/stack-build-cabal:2018-01-29
 
     steps:
       - checkout
@@ -38,20 +38,18 @@ jobs:
           paths:
             - ~/.cabal
 
-      ##### Fetching latest organisation package versions
+      - restore_cache:
+          keys:
+            - dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
+            - dot-stack-{{ checksum "stack.yaml" }}-build
+            - dot-stack-{{ checksum "stack.yaml" }}-setup
+
       - run:
           name: Fetching latest organisation package versions
           command: |
             fetch
             echo "== stack-ci.yaml =="
             cat stack-ci.yaml
-
-      ##### Building library
-      - restore_cache:
-          keys:
-            - dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "hw-aws-sqs-conduit.cabal" }}
-            - dot-stack-{{ checksum "stack.yaml" }}-build
-            - dot-stack-{{ checksum "stack.yaml" }}-setup
 
       - restore_cache:
           key: dot-stack-work-{{ checksum "stack.yaml" }}
@@ -74,7 +72,7 @@ jobs:
           command: stack --stack-yaml stack-ci.yaml build --test --no-run-tests
 
       - save_cache:
-          key: dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "hw-aws-sqs-conduit.cabal" }}
+          key: dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
           paths:
             - ~/.stack
       - save_cache:
@@ -84,7 +82,7 @@ jobs:
 
       - save_cache:
           key: dot-stack-work-{{ checksum "stack.yaml" }}
-          paths: ~/hw-aws-sqs-conduit/.stack-work
+          paths: ~/project/.stack-work
 
       ##### Running tests
       - run:
