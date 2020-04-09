@@ -156,13 +156,6 @@ jobs:
       - image: quay.io/haskell_works/ghc-8.4.3
     <<: *cabalbuild
 
-  ghc-8.2.2:
-    environment:
-      - GHC: "ghc8.2.2"
-    docker:
-      - image: quay.io/haskell_works/ghc-8.2.2
-    <<: *cabalbuild
-
   lts-12:
     environment:
       - LTS: "lts-12"
